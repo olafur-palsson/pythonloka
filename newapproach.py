@@ -17,26 +17,30 @@ y_train=y[rnd[0:n_train]]
 x_test=X[rnd[n_train:],:]
 y_test=y[rnd[n_train:]]
 
+'''
+blablabla
+'''
 
 def getCategoryVector(category):
-    return {
-        1: np.array([1, 0]),
-        2: np.array([0, 1]),
-        3: np.array([0, 1])
-    }[category]
+    return np.array([[1, 0]]) if category == 1 else np.array([[0, 1]])
 
 # skilar 600x3
 def getCategoryMatrix():
-    categoryMatrix = np.array([])
+    categoryMatrix = np.zeros((600, 2))
+    i = 0
     for docCategory in y:
-        np.append(categoryMatrix, getCategoryVector(docCategory))
+        docCategory = int(docCategory + 0.25)
+        categoryMatrix[i] = getCategoryVector(docCategory)
+        i = i + 1
+
+    return categoryMatrix
 
 # skilar 1000x3
 def complileCoordinates():
     catMat = getCategoryMatrix()
-    return np.matmul(X.T, catMat)
+    print(y.shape)
+    blablabla = np.matmul(X.T, catMat)
+    return blablabla
 
 coordinates = complileCoordinates()
-
-for c in coordinates:
-    print(c)
+print(coordinates)
