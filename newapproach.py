@@ -41,10 +41,13 @@ def complileCoordinates():
     blablabla = np.matmul(X.T, catMat)
     return blablabla
 
-def get_b():
+def get_sign():
     sign = lambda cat : 1 if cat == 1 else -1
     sign = np.vectorize(sign)
     return sign(y)
+
+def get_b():
+    return np.matmul(X, get_sign())
 
 def leastSquare():
     coordinates = complileCoordinates()
