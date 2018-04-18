@@ -47,14 +47,14 @@ def get_sign():
     return sign(y)
 
 def get_b():
-    return np.matmul(X, get_sign())
+    return np.matmul(X.T, get_sign())
 
 def leastSquare():
     coordinates = complileCoordinates()
     b = get_b()
-    return np.linalg.lstsq(X, get_b())
+    return np.linalg.lstsq(coordinates, get_b())
 
-coordinates = complileCoordinates()
-print(leastSquare())
-print(get_b().shape)
+a = leastSquare()
+for b in a:
+    print(b)
 print("done")
