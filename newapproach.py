@@ -42,5 +42,13 @@ def complileCoordinates():
     blablabla = np.matmul(X.T, catMat)
     return blablabla
 
+def get_b():
+    sign = lambda cat : 1 if cat == 1 else -1
+    return np.array(sign(y))
+
+def leastSquare():
+    return np.linalg.lstsq(complileCoordinates, get_b())
+
 coordinates = complileCoordinates()
 print(coordinates)
+print(leastSquare())
