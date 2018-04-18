@@ -38,17 +38,20 @@ def getCategoryMatrix():
 # skilar 1000x3
 def complileCoordinates():
     catMat = getCategoryMatrix()
-    print(y.shape)
     blablabla = np.matmul(X.T, catMat)
     return blablabla
 
 def get_b():
     sign = lambda cat : 1 if cat == 1 else -1
-    return np.array(sign(y))
+    sign = np.vectorize(sign)
+    return sign(y)
 
 def leastSquare():
-    return np.linalg.lstsq(complileCoordinates, get_b())
+    coordinates = complileCoordinates()
+    b = get_b()
+    return np.linalg.lstsq(X, get_b())
 
 coordinates = complileCoordinates()
-print(coordinates)
 print(leastSquare())
+print(get_b().shape)
+print("done")
