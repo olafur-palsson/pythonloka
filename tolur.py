@@ -147,7 +147,9 @@ for a in range(0, 10):
 
 
 
-printa(data)
+
+plt.imshow(x_train[0,:].reshape(28,28),cmap='Greys') 
+plt.show()
 
 
 
