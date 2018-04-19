@@ -49,12 +49,31 @@ def get_sign():
 def get_b():
     return np.matmul(X.T, get_sign())
 
+def printa(a):
+    for b in a:
+        print(b)
+
+def addOnes(coordinates):
+    result = np.ones((1000, 4))
+    print(coordinates[0])
+    print(result[0])
+    i = 0
+    j = 0
+    while i < 1000:
+        while j < 2:
+            result[i][j] = coordinates[i][j]
+            j = j + 1
+        i = i + 1
+    return result
+
 def leastSquare():
     coordinates = complileCoordinates()
+    coordinates = addOnes(coordinates)
     b = get_b()
+    printa(b)
     return np.linalg.lstsq(coordinates, get_b())
 
+
 a = leastSquare()
-for b in a:
-    print(b)
+printa(a)
 print("done")
