@@ -79,15 +79,21 @@ def sumOfSquareDistToAverage(array):
 def getMultiplesOfDistancesFromAverage(array):
     averages = columnAverage(array)
     dist = array - averages
-    multiplied = np.array([])
+    multiplied = np.ones([array.shape[0]])
+    i = 0
     for entry in dist:
-        np.append(multiplied, (entry[0] * entry[1]))
+        print(entry[0])
+        print(entry[1])
+        multiplied[i] = (entry[0] * entry[1])
+        i = i + 1
+    print(np.sum(multiplied))
     return np.sum(multiplied)
 
 def getSlope():
     coordinates = complileCoordinates()
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
     sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
+    print("this thang")
     print(sumOfMultiples)
     print(sumOfSquareDist)
     return sumOfMultiples / sumOfSquareDist
@@ -103,8 +109,6 @@ def leastSquare():
     coordinates = complileCoordinates()
     #coordinates = addOnes(coordinates)
     b = get_sign()
-    printa(b)
-    print(columnAverage(coordinates))
     return np.linalg.lstsq(coordinates, get_b())
 
 print(leastSquare2())
