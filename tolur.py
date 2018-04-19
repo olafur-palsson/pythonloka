@@ -4,20 +4,15 @@ import numpy as np
 import operator
 import matplotlib.pyplot as plt
 
-data=np.load('docmatrix.npz')
-X=data['X']
-y=data['y']
-terms=data['terms']
-
-# Skipta i gognum i thjalfunar og profunargogn
-n=X.shape[0]
-rnd=np.random.permutation(n) # Slembin umrodun talnanna 1,...,n
-nfrac=0.7 # Hlutfall gagna sem er notad til thjalfunar
-n_train=int(nfrac*n)
-x_train=X[rnd[0:n_train],:]
-y_train=y[rnd[0:n_train]]
-x_test=X[rnd[n_train:],:]
-y_test=y[rnd[n_train:]]
+data=np.load('mnist_small.npz')
+x_train=data['x_train']
+y_train=data['y_train']
+x_test=data['x_test']
+y_test=data['y_test']
+n_train = len(y_train)
+n_test = len(y_test)
+print(x_train.shape)
+print(x_test.shape)
 
 '''
 long comment
@@ -105,7 +100,7 @@ def leastSquare():
     b = get_sign()
     return np.linalg.lstsq(coordinates, get_b())
 
-slope, constant = leastSquare2()
+#slope, constant = leastSquare2()
 
 def plot():
     coordinates = complileCoordinates()
@@ -138,9 +133,9 @@ def getTransformedData():
                             [np.sin(theta), np.cos(theta) ]])
     return np.matmul(transform, complileCoordinates().T)
 
-termvalues = get_TermSquareDist_Dictionary(False)
-termValuesWithSigns = (getSquaredTransformedValues(True))[1]
-sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
+#termvalues = get_TermSquareDist_Dictionary(False)
+#termValuesWithSigns = (getSquaredTransformedValues(True))[1]
+#sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
 '''
 for a in range(0, 10):
@@ -148,12 +143,14 @@ for a in range(0, 10):
     print(sortedTermsValues[a])
 '''
 
+#                 FOOTER
+'''
 def getClassified(x):
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
     values = np.matmul(x, termValuesWithSigns.T)
     return sign(values)
 
-yGuesses = getClassified(x_train)
+#yGuesses = getClassified(x_train)
 
 correct = 0
 i = -1
@@ -169,7 +166,7 @@ for y in y_train:
 print("Training accuracy")
 print(float(correct) / float(y_train.shape[0]))
 
-yGuesses = getClassified(x_test)
+#yGuesses = getClassified(x_test)
 correct = 0
 i = -1
 for y in y_test:
@@ -188,3 +185,4 @@ print(float(correct) / float(y_test.shape[0]))
 print()
 
 plot()
+'''
