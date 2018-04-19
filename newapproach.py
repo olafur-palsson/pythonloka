@@ -109,6 +109,7 @@ def leastSquare():
     b = get_sign()
     return np.linalg.lstsq(coordinates, get_b())
 
+slope, constant = leastSquare2()
 
 def plot():
     coordinates = complileCoordinates()
@@ -117,27 +118,30 @@ def plot():
     plt.scatter(coordinates[:,0], coordinates[:,1])
     plt.show()
 
+def getSquaredTransformedValues():
+    square = np.vectorize(lambda x : x ** 2)
+    transformed = getTransformedData()
+    squared = square(transformed)
+    return squared
 
-theta = np.arctan(getSlope())
-
-transform = np.array([[np.cos(theta), -np.sin(theta)],
-                       [np.sin(theta), np.cos(theta) ]])
+def get_TermSquareDist_Dictionary():
+    squared = getSquaredTransformedValues()
+    termvalues = {}
+    i = 0
+    for term in terms:
+        termvalues[term] = squared[1][i]
+        i = i + 1
+    return termvalues
 
 def getTransformedData():
+    # transformar data a thann hatt ad regression linan er larett
+    # theta er horn regression linunnar
+    theta = np.arctan(getSlope())
+    transform = np.array([[np.cos(theta), -np.sin(theta)],
+                            [np.sin(theta), np.cos(theta) ]])
     return np.matmul(transform, complileCoordinates().T)
 
-transformed = getTransformedData()
-slope, constant = leastSquare2()
-
-square = np.vectorize(lambda x : x ** 2)
-squared = square(transformed)
-
-termvalues = {}
-i = 0
-for term in terms:
-    termvalues[term] = squared[1][i]
-    i = i + 1
-
+termvalues = get_TermSquareDist_Dictionary()
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
 for a in range(0, 10):
