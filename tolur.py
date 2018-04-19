@@ -143,6 +143,14 @@ for a in range(0, 10):
     print(sortedTermsValues[a])
 '''
 
+
+
+
+
+printa(data)
+
+
+
 #                 FOOTER
 '''
 def getClassified(x):
