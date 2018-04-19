@@ -66,13 +66,46 @@ def addOnes(coordinates):
         i = i + 1
     return result
 
+def columnAverage(a):
+    return a.T.dot(np.ones(a.shape[0])) / a.shape[0]
+
+def sumOfSquareDistToAverage(array):
+    a = columnAverage(array)
+    print(a)
+    average = columnAverage(array)
+    square = np.vectorize(lambda x : x ** 2)
+    return np.sum(square(array - average))
+
+def getMultiplesOfDistancesFromAverage(array):
+    averages = columnAverage(array)
+    dist = array - averages
+    multiplied = np.array([])
+    for entry in dist:
+        np.append(multiplied, (entry[0] * entry[1]))
+    return np.sum(multiplied)
+
+def getSlope():
+    coordinates = complileCoordinates()
+    sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
+    sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
+    return sumOfMultiples / sumOfSquareDist
+
+def leastSquare2():
+    slope = getSlope()
+    coordinates = complileCoordinates()
+    meanX, meanY = columnAverage(coordinates)
+    constant = meanY - slope * meanX
+    return slope, constant
+
 def leastSquare():
     coordinates = complileCoordinates()
-    coordinates = addOnes(coordinates)
-    b = get_b()
+    #coordinates = addOnes(coordinates)
+    b = get_sign()
     printa(b)
+    print(columnAverage(coordinates))
     return np.linalg.lstsq(coordinates, get_b())
 
+print(leastSquare2())
 
 a = leastSquare()
 printa(a)
