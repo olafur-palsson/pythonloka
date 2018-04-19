@@ -142,11 +142,9 @@ termvalues = get_TermSquareDist_Dictionary(False)
 termValuesWithSigns = (getSquaredTransformedValues(True))[1]
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
-'''
 for a in range(0, 10):
     print(a)
     print(sortedTermsValues[a])
-'''
 
 def getClassified(x):
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
@@ -165,7 +163,23 @@ for y in y_train:
     if int(y) != 1 and yGuesses[i] == -1:
         correct = correct + 1
         continue
-
+        
+print("Training accuracy")
 print(float(correct) / float(y_train.shape[0]))
+
+yGuesses = getClassified(x_test)
+correct = 0
+i = -1
+for y in y_test:
+    i = i + 1
+    if int(y) == yGuesses[i]:
+        correct = correct + 1
+        continue
+    if int(y) != 1 and yGuesses[i] == -1:
+        correct = correct + 1
+        continue
+
+
+print()
 
 plot()
