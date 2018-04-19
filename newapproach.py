@@ -19,7 +19,7 @@ x_test=X[rnd[n_train:],:]
 y_test=y[rnd[n_train:]]
 
 '''
-blablabla
+long comment
 '''
 
 def getCategoryVector(category):
@@ -111,9 +111,15 @@ def leastSquare():
     b = get_sign()
     return np.linalg.lstsq(coordinates, get_b())
 
+def get10mostAffecting():
+    print("blablabla")
+
 def plot():
     coordinates = complileCoordinates()
-    plt.plot(coordinates[:,0], coordinates[:,1])
+    slope, constant = leastSquare2()
+    plt.plot([0, 500], [constant, constant + 500 * slope])
+    plt.scatter(coordinates[:,0], coordinates[:,1])
+    plt.show()
     print("Done plotting")
 
 
@@ -121,4 +127,7 @@ print(leastSquare2())
 plot()
 a = leastSquare()
 printa(a)
+
+printa(x_test)
+printa(y_test)
 print("done")
