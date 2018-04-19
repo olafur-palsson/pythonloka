@@ -86,7 +86,6 @@ def getMultiplesOfDistancesFromAverage(array):
         print(entry[1])
         multiplied[i] = (entry[0] * entry[1])
         i = i + 1
-    print(np.sum(multiplied))
     return np.sum(multiplied)
 
 def getSlope():
@@ -111,7 +110,13 @@ def leastSquare():
     b = get_sign()
     return np.linalg.lstsq(coordinates, get_b())
 
+def plot():
+    coordinates = complileCoordinates()
+    plot(coordinates[:,0], coordinates[:,1])
+
+
 print(leastSquare2())
+plot()
 
 a = leastSquare()
 printa(a)
