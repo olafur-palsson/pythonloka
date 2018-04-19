@@ -88,6 +88,8 @@ def getSlope():
     coordinates = complileCoordinates()
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
     sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
+    print(sumOfMultiples)
+    print(sumOfSquareDist)
     return sumOfMultiples / sumOfSquareDist
 
 def leastSquare2():
