@@ -1,6 +1,7 @@
 
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 data=np.load('docmatrix.npz')
 X=data['X']
@@ -112,12 +113,12 @@ def leastSquare():
 
 def plot():
     coordinates = complileCoordinates()
-    plot(coordinates[:,0], coordinates[:,1])
+    plt.plot(coordinates[:,0], coordinates[:,1])
+    print("Done plotting")
 
 
 print(leastSquare2())
 plot()
-
 a = leastSquare()
 printa(a)
 print("done")
