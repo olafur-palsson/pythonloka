@@ -156,7 +156,6 @@ def getClassified(x):
     return sign(values)
 
 yGuesses = getClassified(x_train)
-printa(yGuesses)
 
 correct = 0
 i = -1
