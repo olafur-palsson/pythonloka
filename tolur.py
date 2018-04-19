@@ -124,10 +124,11 @@ def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked):
         i = i + 1
     return termvalues
 
-
 termvalues = get_TermSquareDist_Dictionary(False, 1)
 termValuesWithSigns = (getSquaredTransformedValues(True, 1))[1]
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
+
+print(termvalues.shape)
 
 '''
 for a in range(0, 10):
