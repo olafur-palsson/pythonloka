@@ -28,11 +28,11 @@ def getCategoryVector(category):
 
 # skilar 600x3
 def getCategoryMatrix():
-    categoryMatrix = np.zeros((600, 2))
+    categoryMatrix = np.zeros((420, 2))
     i = 0
-    for docCategory in y:
-        docCategory = int(docCategory + 0.25)
-        categoryMatrix[i] = getCategoryVector(docCategory)
+    for a in categoryMatrix:
+        docCategory = int(y[i]+ 0.25)
+        categoryMatrix[i] = getCategoryVector(y[i])
         i = i + 1
 
     return categoryMatrix
@@ -40,7 +40,7 @@ def getCategoryMatrix():
 # skilar 1000x3
 def complileCoordinates():
     catMat = getCategoryMatrix()
-    blablabla = np.matmul(X.T, catMat)
+    blablabla = np.matmul(x_train.T, catMat)
     return blablabla
 
 def get_sign():
@@ -49,7 +49,7 @@ def get_sign():
     return sign(y)
 
 def get_b():
-    return np.matmul(X.T, get_sign())
+    return np.matmul(x_train.T, get_sign())
 
 def printa(a):
     for b in a:
@@ -119,10 +119,9 @@ def plot():
     plt.show()
 
 def getSquaredTransformedValues(keepsigns):
-    square = np.vectorize(lambda x : x ** 2)
+    square = np.vectorize(lambda x : abs(x))
     squareKeep = np.vectorize( lambda x : -(x ** 2) if x > 0 else x ** 2)
     transformed = getTransformedData()
-
     squared = squareKeep(transformed) if keepsigns else square(transformed)
     return squared
 
@@ -138,20 +137,45 @@ def get_TermSquareDist_Dictionary(keepSigns):
 def getTransformedData():
     # transformar data a thann hatt ad regression linan er larett
     # theta er horn regression linunnar
-    theta = np.arctan(getSlope())
+    theta = -np.arctan(getSlope())
     transform = np.array([[np.cos(theta), -np.sin(theta)],
                             [np.sin(theta), np.cos(theta) ]])
     return np.matmul(transform, complileCoordinates().T)
 
 termvalues = get_TermSquareDist_Dictionary(False)
-termValuesWithSigns = getSquaredTransformedValues(True)
+termValuesWithSigns = (getSquaredTransformedValues(True))[1]
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
 for a in range(0, 10):
     print(a)
     print(sortedTermsValues[a])
 
+def getClassified(x):
+    sign = np.vectorize(lambda x : 1 if x > 0 else -1)
+    values = np.matmul(x, termValuesWithSigns.T)
+    return sign(values)
 
+yGuesses = getClassified(x_train)
+printa(yGuesses)
 
-print(leastSquare2())
+correct = 0
+i = -1
+for y in y_train:
+    i = i + 1
+    print(i)
+    print(int(y))
+    print(yGuesses[i])
+    if int(y) == yGuesses[i]:
+        print("Hit")
+        correct = correct + 1
+        continue
+    if int(y) != 1 and yGuesses[i] == -1:
+        print("hit")
+        correct = correct + 1
+        continue
+
+print(correct)
+print(y_train.shape)
+print(float(correct) / float(y_train.shape[0]))
+
 plot()
