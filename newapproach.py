@@ -54,13 +54,13 @@ def printa(a):
         print(b)
 
 def addOnes(coordinates):
-    result = np.ones((1000, 4))
+    result = np.ones((1000, 3))
     print(coordinates[0])
     print(result[0])
     i = 0
     j = 0
     while i < 1000:
-        while j < 2:
+        while j < 1:
             result[i][j] = coordinates[i][j]
             j = j + 1
         i = i + 1
