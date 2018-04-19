@@ -1,6 +1,7 @@
 
 
 import numpy as np
+import operator
 import matplotlib.pyplot as plt
 
 data=np.load('docmatrix.npz')
@@ -56,8 +57,6 @@ def printa(a):
 
 def addOnes(coordinates):
     result = np.ones((1000, 3))
-    print(coordinates[0])
-    print(result[0])
     i = 0
     j = 0
     while i < 1000:
@@ -68,6 +67,7 @@ def addOnes(coordinates):
     return result
 
 def columnAverage(a):
+
     return a.T.dot(np.ones(a.shape[0])) / a.shape[0]
 
 def sumOfSquareDistToAverage(array):
@@ -83,8 +83,6 @@ def getMultiplesOfDistancesFromAverage(array):
     multiplied = np.ones([array.shape[0]])
     i = 0
     for entry in dist:
-        print(entry[0])
-        print(entry[1])
         multiplied[i] = (entry[0] * entry[1])
         i = i + 1
     return np.sum(multiplied)
@@ -111,8 +109,6 @@ def leastSquare():
     b = get_sign()
     return np.linalg.lstsq(coordinates, get_b())
 
-def get10mostAffecting():
-    print("blablabla")
 
 def plot():
     coordinates = complileCoordinates()
@@ -120,14 +116,34 @@ def plot():
     plt.plot([0, 500], [constant, constant + 500 * slope])
     plt.scatter(coordinates[:,0], coordinates[:,1])
     plt.show()
-    print("Done plotting")
+
+
+theta = np.arctan(getSlope())
+
+transform = np.array([[np.cos(theta), -np.sin(theta)],
+                       [np.sin(theta), np.cos(theta) ]])
+
+def getTransformedData():
+    return np.matmul(transform, complileCoordinates().T)
+
+transformed = getTransformedData()
+slope, constant = leastSquare2()
+
+square = np.vectorize(lambda x : x ** 2)
+squared = square(transformed)
+
+termvalues = {}
+i = 0
+for term in terms:
+    termvalues[term] = squared[1][i]
+    i = i + 1
+
+sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
+
+for a in range(0, 10):
+    print(a)
+    print(sortedTermsValues[a])
 
 
 print(leastSquare2())
 plot()
-a = leastSquare()
-printa(a)
-
-printa(x_test)
-printa(y_test)
-print("done")
