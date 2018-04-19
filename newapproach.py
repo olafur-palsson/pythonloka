@@ -31,8 +31,8 @@ def getCategoryMatrix():
     categoryMatrix = np.zeros((420, 2))
     i = 0
     for a in categoryMatrix:
-        docCategory = int(y[i]+ 0.25)
-        categoryMatrix[i] = getCategoryVector(y[i])
+        docCategory = int(y_train[i]+ 0.25)
+        categoryMatrix[i] = getCategoryVector(docCategory)
         i = i + 1
 
     return categoryMatrix
@@ -72,7 +72,6 @@ def columnAverage(a):
 
 def sumOfSquareDistToAverage(array):
     a = columnAverage(array)
-    print(a)
     average = columnAverage(array)
     square = np.vectorize(lambda x : x ** 2)
     return np.sum(square(array - average))
@@ -91,9 +90,6 @@ def getSlope():
     coordinates = complileCoordinates()
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
     sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
-    print("this thang")
-    print(sumOfMultiples)
-    print(sumOfSquareDist)
     return sumOfMultiples / sumOfSquareDist
 
 def leastSquare2():
@@ -146,9 +142,11 @@ termvalues = get_TermSquareDist_Dictionary(False)
 termValuesWithSigns = (getSquaredTransformedValues(True))[1]
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
+'''
 for a in range(0, 10):
     print(a)
     print(sortedTermsValues[a])
+'''
 
 def getClassified(x):
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
@@ -161,20 +159,13 @@ correct = 0
 i = -1
 for y in y_train:
     i = i + 1
-    print(i)
-    print(int(y))
-    print(yGuesses[i])
     if int(y) == yGuesses[i]:
-        print("Hit")
         correct = correct + 1
         continue
     if int(y) != 1 and yGuesses[i] == -1:
-        print("hit")
         correct = correct + 1
         continue
 
-print(correct)
-print(y_train.shape)
 print(float(correct) / float(y_train.shape[0]))
 
 plot()
