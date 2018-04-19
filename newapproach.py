@@ -144,7 +144,7 @@ def getTransformedData():
     return np.matmul(transform, complileCoordinates().T)
 
 termvalues = get_TermSquareDist_Dictionary(False)
-termValuesWithSigns = get_TermSquareDist_Dictionary(True)
+termValuesWithSigns = getSquaredTransformedValues(True)
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
 for a in range(0, 10):
