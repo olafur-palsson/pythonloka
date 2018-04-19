@@ -118,14 +118,16 @@ def plot():
     plt.scatter(coordinates[:,0], coordinates[:,1])
     plt.show()
 
-def getSquaredTransformedValues():
+def getSquaredTransformedValues(keepsigns):
     square = np.vectorize(lambda x : x ** 2)
+    squareKeep = np.vectorize( lambda x : -(x ** 2) if x > 0 else x ** 2)
     transformed = getTransformedData()
-    squared = square(transformed)
+
+    squared = squareKeep(transformed) if keepsigns else square(transformed)
     return squared
 
-def get_TermSquareDist_Dictionary():
-    squared = getSquaredTransformedValues()
+def get_TermSquareDist_Dictionary(keepSigns):
+    squared = getSquaredTransformedValues(keepSigns)
     termvalues = {}
     i = 0
     for term in terms:
@@ -141,12 +143,14 @@ def getTransformedData():
                             [np.sin(theta), np.cos(theta) ]])
     return np.matmul(transform, complileCoordinates().T)
 
-termvalues = get_TermSquareDist_Dictionary()
+termvalues = get_TermSquareDist_Dictionary(False)
+termValuesWithSigns = get_TermSquareDist_Dictionary(True)
 sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
 
 for a in range(0, 10):
     print(a)
     print(sortedTermsValues[a])
+
 
 
 print(leastSquare2())
