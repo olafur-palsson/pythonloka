@@ -262,7 +262,8 @@ def trialAndError():
     while success < .9:
         trainResults = getClassified2(sampleIn, False)
         success, confusion = getConfusionMatrix(trainResults, samepleOut)
-    return success, confusion
+    print(success)
+    print(confusion)
 
 print("----------MNIST Classification-----------")
 printConfusionAndSuccessRate(True)
