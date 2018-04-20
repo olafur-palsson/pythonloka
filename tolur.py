@@ -36,6 +36,15 @@ sampleIn  = x_train2
 testIn    = x_test2
 testOut   = y_test2
 
+def shuffle():
+    global x_train1, y_train1, x_test1, y_test1
+    rnd       = np.random.permutation(n) # Slembin umrodun talnanna 1,...,n
+    x_train1  = X[rnd[0:n_train1],:]
+    y_train1  = y[rnd[0:n_train1]]
+    x_test1   = X[rnd[n_train1:],:]
+    y_test1   = y[rnd[n_train1:]]
+
+
 def setSamples(isMNIST):
     global sampleIn, sampleOut, testIn, testOut
     if isMNIST:
@@ -256,12 +265,13 @@ def printConfusionAndSuccessRate(isMNIST):
     printConfusion(testResults, testOut)
 
 def trialAndError():
-    setSamples(False)
     success = 0
     confusion = 0
     while success < .9:
+        shuffle()
+        setSamples(False)
         trainResults = getClassified2(sampleIn, False)
-        success, confusion = getConfusionMatrix(trainResults, samepleOut)
+        success, confusion = getConfusionMatrix(trainResults, sampleOut)
     print(success)
     print(confusion)
 
