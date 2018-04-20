@@ -18,8 +18,8 @@ y         = data1['y']
 terms     = data1['terms']
 n         = X.shape[0]
 
-minusOne = np.vectorize(lambda x : x - 1)
-y = minusOne(y)
+toBinary = np.vectorize(lambda x : 1 if x== 1 else 0)
+y = toBinary(y)
 
 rnd       = np.random.permutation(n) # Slembin umrodun talnanna 1,...,n
 nfrac     = 0.7 # Hlutfall gagna sem er notad til thjalfunar
@@ -28,6 +28,8 @@ x_train1  = X[rnd[0:n_train1],:]
 y_train1  = y[rnd[0:n_train1]]
 x_test1   = X[rnd[n_train1:],:]
 y_test1   = y[rnd[n_train1:]]
+
+print(y_test1, y_train1)
 
 sampleOut = y_train2
 sampleIn  = x_train2
@@ -48,7 +50,7 @@ def setSamples(isMNIST):
         testIn = x_test1
 
 def getNoClasses():
-    return 10 if sampleOut.shape[0] == 10000 else 3
+    return 10 if sampleOut.shape[0] == 10000 else 2
 
 # prenta array til ad debugga
 def printa(a):
@@ -174,7 +176,7 @@ def normalize(a):
     divideByMax = np.vectorize(lambda x : round(x/max, 3))
     return divideByMax(a)
 
-def getClassified2(x):
+def getClassified2(x, switch0and1=False):
     sampleSize = x.shape[0]
     shapeOfResults = [getNoClasses(), sampleSize, x.shape[1]]
     sampleValueForClass = np.zeros(shapeOfResults)
@@ -209,12 +211,13 @@ def getClassified2(x):
                 maxValue = value
                 indexMax = j
         #print(np.array([i, sampleOut[i], indexMax, maxValue]).astype(int))
+        if indexMax < 2 and switch0and1:
+            indexMax = 0 if indexMax == 1 else 1
         classified = np.append(classified, indexMax)
+
 
     return classified
 
-yGuesses = getClassified2(sampleIn)
-yTest = getClassified2(testIn)
 
 def getConfusionMatrix(guesses, actualOutput):
     confusionMatrix = np.zeros((getNoClasses(), getNoClasses()))
@@ -231,6 +234,9 @@ def getConfusionMatrix(guesses, actualOutput):
     successRate = float(correct) / guesses.shape[0]
     return successRate, confusionMatrix.astype(int)
 
+def getConfusionForTerms(guesses, actualOutput):
+    getConfusionMatrix()
+
 def printConfusion(guesses, actual):
     success, confusion = getConfusionMatrix(guesses, actual)
     print("Error Rate:")
@@ -242,8 +248,8 @@ def printConfusion(guesses, actual):
 def printConfusionAndSuccessRate(isMNIST):
     setSamples(isMNIST)
     print(sampleIn.shape)
-    trainResults = getClassified2(sampleIn)
-    testResults  = getClassified2(testIn)
+    trainResults = getClassified2(sampleIn, not isMNIST)
+    testResults  = getClassified2(testIn, not isMNIST)
     print("Training Data")
     printConfusion(trainResults, sampleOut)
     print("Test Data")
@@ -251,5 +257,23 @@ def printConfusionAndSuccessRate(isMNIST):
 
 print("----------MNIST Classification-----------")
 printConfusionAndSuccessRate(True)
-print("----------TERMS Classification-----------")
-printConfusionAndSuccessRate(False)
+
+def engineerFeatures(howManyFeatures):
+    global sampleIn, testIn, x_train2, x_test2
+    max = np.max(sampleIn)
+    newSampleIn = np.zeros((sampleIn.shape[0], sampleIn.shape[1] + howManyFeatures))
+    newTestIn   = np.zeros((testIn.shape[0], testIn.shape[1] + howManyFeatures))
+    for i in range(0, sampleIn.shape[0]):
+        randomFeatures = np.random.rand(howManyFeatures)
+        newSampleIn[i] = np.append(sampleIn[i], randomFeatures)
+    for i in range(0, testIn.shape[0]):
+        randomFeatures = np.random.rand(howManyFeatures)
+        print(testIn.shape)
+        print(np.append(testIn[i], randomFeatures).shape)
+        newTestIn[i] = np.append(testIn[i], randomFeatures)
+    x_train2 = newSampleIn
+    x_test2 = newTestIn
+
+engineerFeatures(1000)
+print("----------MNIST extra features-----------")
+printConfusionAndSuccessRate(True)
