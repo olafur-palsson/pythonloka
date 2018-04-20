@@ -263,11 +263,10 @@ def engineerFeatures(howManyFeatures):
     max = np.max(sampleIn)
     newSampleIn = np.zeros((sampleIn.shape[0], sampleIn.shape[1] + howManyFeatures))
     newTestIn   = np.zeros((testIn.shape[0], testIn.shape[1] + howManyFeatures))
+    randomFeatures = np.random.rand(howManyFeatures)
     for i in range(0, sampleIn.shape[0]):
-        randomFeatures = np.random.rand(howManyFeatures)
         newSampleIn[i] = np.append(sampleIn[i], randomFeatures)
     for i in range(0, testIn.shape[0]):
-        randomFeatures = np.random.rand(howManyFeatures)
         print(testIn.shape)
         print(np.append(testIn[i], randomFeatures).shape)
         newTestIn[i] = np.append(testIn[i], randomFeatures)
