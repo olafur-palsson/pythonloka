@@ -11,9 +11,6 @@ x_test2  = data2['x_test']
 y_test2  = data2['y_test']
 n_train2 = len(y_train2)
 n_test2  = len(y_test2)
-print(x_train2.shape)
-print(x_test2.shape)
-print(y_train2.shape)
 
 data1     = np.load('docmatrix.npz')
 X         = data1['X']
@@ -199,6 +196,7 @@ def getClassified2(x):
         #sumOfRows = sign(sumOfRows)
         sumOfRows = multMinusOne(sumOfRows)
         sumOfRows = normalize(sumOfRows)
+        print(sumOfRows)
         summedUpValues[k] = sumOfRows
 
     classified = np.array([])
@@ -227,7 +225,6 @@ def getConfusionMatrix(guesses, actualOutput):
         i = i + 1
         guess = int(guesses[i])
         y     = int(actual)
-
         confusionMatrix[y][guess] = confusionMatrix[y][guess] + 1
         if y == guess:
             correct = correct + 1
