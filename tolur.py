@@ -133,15 +133,27 @@ def getTop10():
         print(a)
         print(sortedTermsValues[a])
 
-
-
-
+def getIndexOfBest(array):
+    indexOfMax = -1
+    maxValue = 0
+    for a in range(0, len(array)):
+        if array[a] > maxValue:
+            indexOfMax = a
 
 def getClassified2(x):
     sampleValueForClass = np.zeros(10, 784)
     for i in range(0, noClasses):
         sampleValueForClass[i] = (getSquaredTransformedValues(True, 3))[1]
-    sign = np.vectorize(lambda x : 1 if x > 0 else -1)
+
+    sampleValueForClass = sampleValueForClass.T
+    for i in range(0, sampleValueForClass.shape[0]):
+        maxValue = 0
+        indexMax = -1
+        for j range(0, samepleValueForClass.shape[1]):
+            if sampleValueForClass[i][j] > max:
+                indexMax = j
+                maxValue = sampleValueForClass[i][j]
+    
     values = np.matmul(x, termValuesWithSigns.T)
     return sign(values)
 
