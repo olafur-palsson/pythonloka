@@ -36,6 +36,7 @@ sampleIn  = x_train2
 testIn    = x_test2
 testOut   = y_test2
 
+#stokka aftur til ad fa betra training session
 def shuffle():
     global x_train1, y_train1, x_test1, y_test1
     rnd       = np.random.permutation(n) # Slembin umrodun talnanna 1,...,n
@@ -44,7 +45,7 @@ def shuffle():
     x_test1   = X[rnd[n_train1:],:]
     y_test1   = y[rnd[n_train1:]]
 
-
+# her veljum vid hvor datasettid vid aetlum ad nota
 def setSamples(isMNIST):
     global sampleIn, sampleOut, testIn, testOut
     if isMNIST:
@@ -58,10 +59,11 @@ def setSamples(isMNIST):
         testOut = y_test1
         testIn = x_test1
 
+# skilar hversu mikif af flokkum
 def getNoClasses():
     return 10 if sampleOut.shape[0] == 10000 else 2
 
-# prenta array til ad debugga
+# prenta array til ad debugga/skoda data
 def printa(a):
     for b in a:
         print(b)
@@ -73,6 +75,7 @@ def getCategoryVector(category, correctCategory):
     a[isCorrect] = 1
     return a
 
+# na i fylki af [0, 1]/[1, 0] eftir thvi hvada tolu vid erum ad skoda
 def getCategoryMatrix(numberBeingChecked):
     # na i fylki sem er jafn langt og samples
     categoryMatrix = np.zeros((sampleOut.shape[0], 2))
@@ -88,6 +91,7 @@ def compileCoordinates(numberBeingChecked):
     catMat = getCategoryMatrix(numberBeingChecked)
     return np.matmul(sampleIn.T, catMat)
 
+# medaltal dalka
 def columnAverage(a):
     averages = np.matmul(a.T, np.ones(a.shape[0])) / a.shape[0]
     return averages
@@ -99,9 +103,9 @@ def sumOfSquareDistToAverage(array):
     square = np.vectorize(lambda x : x ** 2)
     return np.sum(square(array - average))
 
+# na i fjarlaegdina fra medaltali fyrir regression linu
 def getMultiplesOfDistancesFromAverage(array):
     averages = columnAverage(array)
-    print(averages)
     dist = array - averages
     multiplied = np.ones([array.shape[0]])
     i = 0
@@ -110,6 +114,7 @@ def getMultiplesOfDistancesFromAverage(array):
         i = i + 1
     return np.sum(multiplied)
 
+# na i hallatolu regression linu
 def getSlope(numberBeingChecked):
     coordinates = compileCoordinates(numberBeingChecked)
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
@@ -117,6 +122,7 @@ def getSlope(numberBeingChecked):
     #sumOfMultiples = np.sum(coordinates)
     return sumOfMultiples / sumOfSquareDist
 
+# na i hallatolu og fastann til ad klara regression linuna
 def leastSquare2(numberBeingChecked):
     slope = getSlope(numberBeingChecked)
     coordinates = compileCoordinates(numberBeingChecked)
@@ -124,6 +130,7 @@ def leastSquare2(numberBeingChecked):
     constant = meanY - slope * meanX
     return slope, constant
 
+# thaegilegt til ad plotta upp binary classifier
 def plot(numberBeingChecked):
     coordinates = compileCoordinates(numberBeingChecked)
     slope, constant = leastSquare2(numberBeingChecked)
@@ -131,12 +138,15 @@ def plot(numberBeingChecked):
     plt.scatter(coordinates[:,0], coordinates[:,1])
     plt.show()
 
+# skilar fylki sem snyr gognum hornid theta
 def getRotationMatrix(theta):
     return       np.array([
         [np.cos(theta), -np.sin(theta)],
         [np.sin(theta),  np.cos(theta)]
     ])
 
+# skilar gognunum snunum thannig ad regression linan er larett
+# vid skilum sidan y hnitunum sem verda tha fjarlaegd fra linunni
 def getTransformedData(numberBeingChecked):
     # transformar data a thann hatt ad regression linan er larett
     # theta er horn regression linunnar
@@ -151,6 +161,8 @@ def getTransformedData(numberBeingChecked):
     heightRemoved = allValues - transformedConstant
     return heightRemoved
 
+# herna skilad square distance fra regression linu, vid getum sidan haldid
+# formerkinu
 def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     square = np.vectorize(lambda x : x ** 2)
     squareKeep = np.vectorize( lambda x : -(x ** 2) if x < 0 else x ** 2)
@@ -159,6 +171,8 @@ def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     squared = transformed
     return squared
 
+# fyrir ordalistann, na i ordalistann og gefa hverju ordi gildi
+# sem er fjarlaegd fra regression linu
 def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked = -1):
     squared = getSquaredTransformedValues(keepSigns, numberBeingChecked)
     termvalues = {}
@@ -168,6 +182,8 @@ def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked = -1):
         i = i + 1
     return termvalues
 
+# radar ordunum eftir hversu langt thau eru fra linunni
+# skilar 10 eftstu
 def getTop10():
     sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
     termvalues = get_TermSquareDist_Dictionary(False, -1)
@@ -175,6 +191,7 @@ def getTop10():
         print(a)
         print(sortedTermsValues[a])
 
+# skilar index af haesta gildi i vigri
 def getIndexOfBest(array):
     indexOfMax = -1
     maxValue = 0
@@ -182,13 +199,16 @@ def getIndexOfBest(array):
         if array[a] > maxValue:
             indexOfMax = a
 
+# tekur in vigur og deilir med haesta stakinu vigrinum
+# til ad fa tolu a bilinu [-1: 1]
 def normalize(a):
     getAbs = np.vectorize(lambda x : abs(x))
     max = np.max(getAbs(a))
     divideByMax = np.vectorize(lambda x : round(x/max, 3))
     return divideByMax(a)
 
-def getClassified2(x, switch0and1=False):
+# least square classifier, tekur in gogn og skilar agiskunum
+def getClassified2(x):
     sampleSize = x.shape[0]
     shapeOfResults = [getNoClasses(), sampleSize, x.shape[1]]
     sampleValueForClass = np.zeros(shapeOfResults)
@@ -198,20 +218,24 @@ def getClassified2(x, switch0and1=False):
         a = getSquaredTransformedValues(True, i)
         sampleValueForClass[i] = a
 
-    # adeins ad fletja arrayid ut
+
+    # notad til ad fa medaltal
     ones = np.ones(x.shape[0])
-    summedUpValues = np.zeros((getNoClasses(), x.shape[1]))
+
+    # nokkur hjalparfoll
     multMinusOne = np.vectorize(lambda x : -x)
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
-    #threshHold = np.vectorize()
 
+    # naum i hvada gildi hver pixel hefur fyrir hverja tolu
+    summedUpValues = np.zeros((getNoClasses(), x.shape[1]))
     for k in range(0, summedUpValues.shape[0]):
-        sumOfRows = np.matmul(sampleValueForClass[k].T, ones)
+        sumOfRows = columnAverage(sampleValueForClass[k])
         #sumOfRows = sign(sumOfRows)
         sumOfRows = multMinusOne(sumOfRows)
         sumOfRows = normalize(sumOfRows)
         summedUpValues[k] = sumOfRows
 
+    # her flokkum vid gognin
     classified = np.array([])
     for i in range(0, x.shape[0]):
         sample = x[i]
@@ -222,12 +246,10 @@ def getClassified2(x, switch0and1=False):
             if value > maxValue:
                 maxValue = value
                 indexMax = j
-        #print(np.array([i, sampleOut[i], indexMax, maxValue]).astype(int))
-        if indexMax < 2 and switch0and1:
-            indexMax = 0 if indexMax == 1 else 1
         classified = np.append(classified, indexMax)
     return classified
 
+# litid fall sem telur nidurstodurnar og setur thaer upp
 def getConfusionMatrix(guesses, actualOutput):
     confusionMatrix = np.zeros((getNoClasses(), getNoClasses()))
     correct = 0
@@ -243,9 +265,7 @@ def getConfusionMatrix(guesses, actualOutput):
     successRate = float(correct) / guesses.shape[0]
     return successRate, confusionMatrix.astype(int)
 
-def getConfusionForTerms(guesses, actualOutput):
-    getConfusionMatrix()
-
+# litid fall sem ser um ad prenta nidurstodurnar
 def printConfusion(guesses, actual):
     success, confusion = getConfusionMatrix(guesses, actual)
     print("Error Rate:")
@@ -254,32 +274,37 @@ def printConfusion(guesses, actual):
     print(confusion)
     print("")
 
+# herna er er fall sem velur hvort vid aetlum ad profa
+# ordalistan eda MNIST
 def printConfusionAndSuccessRate(isMNIST):
     setSamples(isMNIST)
     print(sampleIn.shape)
-    trainResults = getClassified2(sampleIn, not isMNIST)
-    testResults  = getClassified2(testIn, not isMNIST)
+    trainResults = getClassified2(sampleIn)
+    testResults  = getClassified2(testIn)
     print("Training Data")
     printConfusion(trainResults, sampleOut)
     print("Test Data")
     printConfusion(testResults, testOut)
 
+# brute force stokka thangad til nidurstadan flokkar vel
 def trialAndError():
-    success = 0
+    print("trial and error")
+    success = 1
     confusion = 0
-    while success < .9:
+    trial = 0
+    while success > 0.1:
+        print("trial", trial, success)
+        trial = trial + 1
         shuffle()
         setSamples(False)
-        trainResults = getClassified2(sampleIn, False)
+        trainResults = getClassified2(sampleIn)
         success, confusion = getConfusionMatrix(trainResults, sampleOut)
-    print(success)
-    print(confusion)
-
-print("----------MNIST Classification-----------")
-printConfusionAndSuccessRate(True)
-
+    printConfusionAndSuccessRate(False)
+    print("done")
 cachedSampleIn = np.copy(sampleIn)
 cachedTestIn = testIn
+
+# vid buum her til synthetic features
 def engineerFeatures(howManyFeatures):
     global x_train2, x_test2, cachedTestIn, cachedSampleIn
     max = np.max(cachedSampleIn)
@@ -298,9 +323,11 @@ def engineerFeatures(howManyFeatures):
     x_test2 = newTestIn
 
 
+trialAndError()
+print("----------MNIST Classification-----------")
+printConfusionAndSuccessRate(True)
 engineerFeatures(100)
 print("----------MNIST extra features-----------")
-trialAndError()
 printConfusionAndSuccessRate(False)
 engineerFeatures(1000)
 printConfusionAndSuccessRate(True)
