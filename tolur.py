@@ -87,13 +87,14 @@ def getSlope(numberBeingChecked):
     coordinates = compileCoordinates(numberBeingChecked)
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
     sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
+    # sumOfMultiples = np.sum(coordinates)
     return sumOfMultiples / sumOfSquareDist
 
 def leastSquare2(numberBeingChecked):
     slope = getSlope(numberBeingChecked)
+    print(slope)
     coordinates = compileCoordinates(numberBeingChecked)
     meanX, meanY = columnAverage(coordinates)
-
     constant = meanY - slope * meanX
     return slope, constant
 
@@ -174,18 +175,21 @@ def getClassified2(x):
     print(summedUpValues.shape)
     k = 0
     multMinusOne = np.vectorize(lambda x : -x)
-    sign = np.vectorize(lambda x : 1 if x < 0 else -1)
+    sign = np.vectorize(lambda x : 1 if x > 0 else -1)
+
     for allValuesForOneNumber in summedUpValues:
         sumOfRows = np.matmul(sampleValueForClass[k].T, ones)
-        # sumOfRows = sign(sumOfRows)
+        #sumOfRows = sign(sumOfRows)
         sumOfRows = multMinusOne(sumOfRows)
-        print(sumOfRows.reshape(28, 28))
         summedUpValues[k] = sumOfRows
-
         k = k + 1
 
     print("Round 3")
     print(summedUpValues.shape)
+    getAbs = np.vectorize(lambda x : abs(x))
+    max = np.max(getAbs(summedUpValues))
+    divideByMax = np.vectorize(lambda x : round(x/max, 2))
+    summedUpValues = divideByMax(summedUpValues)
     i = 0
     classified = np.array([])
     for sample in x:
@@ -195,11 +199,12 @@ def getClassified2(x):
         for j in range(0, summedUpValues.shape[0]):
             value = sample.dot(summedUpValues[j])
             if value > maxValue:
-                maxValue = sample[j]
+                maxValue = value
                 indexMax = j
-
+        print(i)
+        print(indexMax, maxValue)
         classified = np.append(classified, indexMax)
-        i = i + 1
+
     return classified
 
 yGuesses = getClassified2(sampleIn)
@@ -209,7 +214,8 @@ correct = 0
 i = -1
 for y in sampleOut:
     i = i + 1
-    confusionMatrix[int(y)][int(yGuesses[i])] = confusionMatrix[int(y)][int(yGuesses[i])] + 1
+    confusionMatrix[int(y)][int(yGuesses[i] + 0.01)] = confusionMatrix[int(y)][int(yGuesses[i])] + 1
+    print(int(y), yGuesses[i])
     if int(y) == yGuesses[i]:
         correct = correct + 1
         continue
@@ -222,7 +228,8 @@ for guess in yGuesses:
 
 print(float(zero) / yGuesses.shape[0])
 print("Confusion Matrix")
-print(confusionMatrix)
+
+print(confusionMatrix.astype(int))
 print()
 print("Success Rate")
 print(float(correct) / float(sampleOut.shape[0]))
