@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # comment
 data2    = np.load('mnist_small.npz')
@@ -56,7 +57,7 @@ def getCategoryMatrix(numberBeingChecked):
     return categoryMatrix
 
 # na hnitin a input
-def complileCoordinates(numberBeingChecked):
+def compileCoordinates(numberBeingChecked):
     catMat = getCategoryMatrix(numberBeingChecked)
     return np.matmul(sampleIn.T, catMat)
 
@@ -81,20 +82,21 @@ def getMultiplesOfDistancesFromAverage(array):
     return np.sum(multiplied)
 
 def getSlope(numberBeingChecked):
-    coordinates = complileCoordinates(numberBeingChecked)
+    coordinates = compileCoordinates(numberBeingChecked)
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
     sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
     return sumOfMultiples / sumOfSquareDist
 
 def leastSquare2(numberBeingChecked):
     slope = getSlope(numberBeingChecked)
-    coordinates = complileCoordinates(numberBeingChecked)
-    arrayOfAverages = columnAverage(coordinates)
+    coordinates = compileCoordinates(numberBeingChecked)
+    meanX, meanY = columnAverage(coordinates)
+
     constant = meanY - slope * meanX
     return slope, constant
 
 def plot(numberBeingChecked):
-    coordinates = complileCoordinates()
+    coordinates = compileCoordinates(numberBeingChecked)
     slope, constant = leastSquare2(numberBeingChecked)
     plt.plot([0, 500], [constant, constant + 500 * slope])
     plt.scatter(coordinates[:,0], coordinates[:,1])
@@ -106,7 +108,7 @@ def getTransformedData(numberBeingChecked):
     theta = -np.arctan(getSlope(numberBeingChecked))
     transform = np.array([[np.cos(theta), -np.sin(theta)],
                             [np.sin(theta), np.cos(theta) ]])
-    return np.matmul(transform, complileCoordinates(numberBeingChecked).T)
+    return np.matmul(transform, compileCoordinates(numberBeingChecked).T)
 
 def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     square = np.vectorize(lambda x : abs(x))
@@ -115,7 +117,7 @@ def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     squared = squareKeep(transformed) if keepsigns else square(transformed)
     return squared
 
-def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked):
+def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked = -1):
     squared = getSquaredTransformedValues(keepSigns, numberBeingChecked)
     termvalues = {}
     i = 0
@@ -124,28 +126,28 @@ def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked):
         i = i + 1
     return termvalues
 
-termvalues = get_TermSquareDist_Dictionary(False, 1)
+def getTop10():
+    sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
+    termvalues = get_TermSquareDist_Dictionary(False, -1)
+    for a in range(0, 10):
+        print(a)
+        print(sortedTermsValues[a])
+
+
+
+
 termValuesWithSigns = (getSquaredTransformedValues(True, 1))[1]
-sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
-
-print(termvalues.shape)
-
-'''
-for a in range(0, 10):
-    print(a)
-    print(sortedTermsValues[a])
-'''
 
 def getClassified(x):
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
     values = np.matmul(x, termValuesWithSigns.T)
     return sign(values)
 
-yGuesses = getClassified(x_test)
+yGuesses = getClassified(sampleIn)
 
 correct = 0
 i = -1
-for y in y_test:
+for y in sampleOut:
     i = i + 1
     if int(y) == yGuesses[i]:
         correct = correct + 1
@@ -154,6 +156,6 @@ for y in y_test:
         correct = correct + 1
         continue
 
-print(1-(float(correct) / float(y_test.shape[0])))
+print(1-(float(correct) / float(sampleOut.shape[0])))
 
-plot()
+plot(1)
