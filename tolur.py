@@ -111,7 +111,7 @@ def getTransformedData(numberBeingChecked):
     return np.matmul(transform, compileCoordinates(numberBeingChecked).T)
 
 def getSquaredTransformedValues(keepsigns, numberBeingChecked):
-    square = np.vectorize(lambda x : abs(x))
+    square = np.vectorize(lambda x : x ** 2)
     squareKeep = np.vectorize( lambda x : -(x ** 2) if x > 0 else x ** 2)
     transformed = getTransformedData(numberBeingChecked)
     squared = squareKeep(transformed) if keepsigns else square(transformed)
@@ -136,9 +136,11 @@ def getTop10():
 
 
 
-termValuesWithSigns = (getSquaredTransformedValues(True, 3))[1]
 
-def getClassified(x):
+def getClassified2(x):
+    sampleValueForClass = np.zeros(10, 784)
+    for i in range(0, noClasses):
+        sampleValueForClass[i] = (getSquaredTransformedValues(True, 3))[1]
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
     values = np.matmul(x, termValuesWithSigns.T)
     return sign(values)
