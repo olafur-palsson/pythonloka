@@ -287,11 +287,11 @@ def printConfusionAndSuccessRate(isMNIST):
 # brute force stokka thangad til nidurstadan flokkar vel
 def trialAndError():
     print("trial and error")
-    success = 1
+    success = 0
     confusion = 0
     trial = 0
     print("(This will take some time)")
-    while success > 0.1:
+    while success < 0.9:
         trial = trial + 1
         shuffle()
         setSamples(False)
