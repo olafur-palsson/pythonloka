@@ -141,7 +141,9 @@ def getIndexOfBest(array):
             indexOfMax = a
 
 def getClassified2(x):
-    sampleValueForClass = np.zeros(10, 784)
+    sampleValueForClass = np.zeros((10, 784))
+    classified = np.array([])
+
     for i in range(0, noClasses):
         sampleValueForClass[i] = (getSquaredTransformedValues(True, 3))[1]
 
@@ -149,15 +151,14 @@ def getClassified2(x):
     for i in range(0, sampleValueForClass.shape[0]):
         maxValue = 0
         indexMax = -1
-        for j range(0, samepleValueForClass.shape[1]):
+        for j in range(0, sampleValueForClass.shape[1]):
             if sampleValueForClass[i][j] > max:
                 indexMax = j
                 maxValue = sampleValueForClass[i][j]
-    
-    values = np.matmul(x, termValuesWithSigns.T)
-    return sign(values)
+        np.append(classified, j)
 
-yGuesses = getClassified(sampleIn)
+    return classified
+yGuesses = getClassified2(sampleIn)
 
 correct = 0
 i = -1
