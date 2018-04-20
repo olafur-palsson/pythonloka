@@ -136,7 +136,7 @@ def getTop10():
 
 
 
-termValuesWithSigns = (getSquaredTransformedValues(True, 1))[1]
+termValuesWithSigns = (getSquaredTransformedValues(True, 3))[1]
 
 def getClassified(x):
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
