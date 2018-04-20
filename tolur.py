@@ -1,5 +1,5 @@
-from math import *
 
+from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -80,7 +80,8 @@ def compileCoordinates(numberBeingChecked):
     return np.matmul(sampleIn.T, catMat)
 
 def columnAverage(a):
-    return a.T.dot(np.ones(a.shape[0])) / a.shape[0]
+    averages = np.matmul(a.T, np.ones(a.shape[0])) / a.shape[0]
+    return averages
 
 # lengdin fra larettri/lodrettri medaltalslinu
 def sumOfSquareDistToAverage(array):
@@ -91,6 +92,7 @@ def sumOfSquareDistToAverage(array):
 
 def getMultiplesOfDistancesFromAverage(array):
     averages = columnAverage(array)
+    print(averages)
     dist = array - averages
     multiplied = np.ones([array.shape[0]])
     i = 0
@@ -215,10 +217,7 @@ def getClassified2(x, switch0and1=False):
         if indexMax < 2 and switch0and1:
             indexMax = 0 if indexMax == 1 else 1
         classified = np.append(classified, indexMax)
-
-
     return classified
-
 
 def getConfusionMatrix(guesses, actualOutput):
     confusionMatrix = np.zeros((getNoClasses(), getNoClasses()))
@@ -256,6 +255,15 @@ def printConfusionAndSuccessRate(isMNIST):
     print("Test Data")
     printConfusion(testResults, testOut)
 
+def trialAndError():
+    setSamples(False)
+    success = 0
+    confusion = 0
+    while success < .9:
+        trainResults = getClassified2(sampleIn, False)
+        success, confusion = getConfusionMatrix(trainResults, samepleOut)
+    return success, confusion
+
 print("----------MNIST Classification-----------")
 printConfusionAndSuccessRate(True)
 
@@ -269,21 +277,19 @@ def engineerFeatures(howManyFeatures):
     sign = np.vectorize(lambda x : -1 if x<0 else 1)
     randomWeights = np.random.rand(cachedSampleIn.shape[1], howManyFeatures)
     #randomWeights = sign(randomWeights)
-
     trainFeatures = np.matmul(cachedSampleIn, randomWeights) / 784
     testFeatures = np.matmul(cachedTestIn, randomWeights) / 784
-
     for i in range(0, cachedSampleIn.shape[0]):
         newSampleIn[i] = np.append(cachedSampleIn[i], trainFeatures[i])
-
     for i in range(0, cachedTestIn.shape[0]):
         newTestIn[i] = np.append(cachedTestIn[i], testFeatures[i])
     x_train2 = newSampleIn
     x_test2 = newTestIn
 
+
 engineerFeatures(100)
 print("----------MNIST extra features-----------")
-printConfusionAndSuccessRate(True)
+printConfusionAndSuccessRate(False)
 engineerFeatures(1000)
 printConfusionAndSuccessRate(True)
 engineerFeatures(5000)
