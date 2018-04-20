@@ -49,7 +49,7 @@ def getCategoryVector(category, correctCategory):
     return a
 
 def getCategoryMatrix(numberBeingChecked):
-    # na i fylki sem er jafn langt og samples 
+    # na i fylki sem er jafn langt og samples
     categoryMatrix = np.zeros((sampleOut.shape[0], noClasses))
     i = 0
     for a in categoryMatrix:
@@ -104,14 +104,25 @@ def plot(numberBeingChecked):
     plt.scatter(coordinates[:,0], coordinates[:,1])
     plt.show()
 
+def getRotationMatrix(theta):
+    return       np.array([
+        [np.cos(theta), -np.sin(theta)],
+        [np.sin(theta),  np.cos(theta)]
+    ])
+
 def getTransformedData(numberBeingChecked):
     # transformar data a thann hatt ad regression linan er larett
     # theta er horn regression linunnar
-    theta = -np.arctan(getSlope(numberBeingChecked))
-    print(theta)
-    transform = np.array([[np.cos(theta), -np.sin(theta)],
-                            [np.sin(theta), np.cos(theta) ]])
-    return np.matmul(transform, compileCoordinates(numberBeingChecked).T)
+    slope, constant = leastSquare2(numberBeingChecked)
+    theta = -np.arctan(slope)
+    transform = getRotationMatrix(theta)
+    constantCoordinates = np.array([0, constant])
+    # vid tokum herna bara y-gildin post transformation vegna thess ad bara
+    # thau hafa ahrif a lengd fra regression linunni
+    transformedConstant = np.matmul(transform, constantCoordinates)[1]
+    allValues = np.matmul(transform, compileCoordinates(numberBeingChecked).T)[1]
+    heightRemoved = allValues - transformedConstant
+    return heightRemoved
 
 def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     square = np.vectorize(lambda x : x ** 2)
@@ -125,7 +136,7 @@ def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked = -1):
     termvalues = {}
     i = 0
     for term in terms:
-        termvalues[term] = squared[1][i]
+        termvalues[term] = squared[i]
         i = i + 1
     return termvalues
 
@@ -148,10 +159,11 @@ def getClassified2(x):
     shapeOfResults = [10, sampleSize, x.shape[1]]
     sampleValueForClass = np.zeros(shapeOfResults)
 
+    # Na i gildin fyrir hvern pixil og hverja tolu
     print("Round 1")
     for i in range(0, 10):
         a = getSquaredTransformedValues(True, i)
-        sampleValueForClass[i] = a[1]
+        sampleValueForClass[i] = a
 
     # adeins ad fletja arrayid ut
     print("Round 2")
@@ -161,10 +173,15 @@ def getClassified2(x):
     summedUpValues = np.zeros((10, x.shape[1]))
     print(summedUpValues.shape)
     k = 0
+    multMinusOne = np.vectorize(lambda x : -x)
     sign = np.vectorize(lambda x : 1 if x < 0 else -1)
     for allValuesForOneNumber in summedUpValues:
         sumOfRows = np.matmul(sampleValueForClass[k].T, ones)
-        summedUpValues[k] = sign(sumOfRows)
+        # sumOfRows = sign(sumOfRows)
+        sumOfRows = multMinusOne(sumOfRows)
+        print(sumOfRows.reshape(28, 28))
+        summedUpValues[k] = sumOfRows
+
         k = k + 1
 
     print("Round 3")
@@ -197,4 +214,4 @@ for y in sampleOut:
 
 print(float(correct) / float(sampleOut.shape[0]))
 
-plot(1)
+plot(5)
