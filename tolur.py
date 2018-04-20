@@ -263,13 +263,15 @@ def engineerFeatures(howManyFeatures):
     max = np.max(sampleIn)
     newSampleIn = np.zeros((sampleIn.shape[0], sampleIn.shape[1] + howManyFeatures))
     newTestIn   = np.zeros((testIn.shape[0], testIn.shape[1] + howManyFeatures))
-    randomFeatures = np.random.rand(howManyFeatures)
-    for i in range(0, sampleIn.shape[0]):
-        newSampleIn[i] = np.append(sampleIn[i], randomFeatures)
+    randomWeights = np.random.rand(sampleIn.shape[1], howManyFeatures)
+
+    trainFeatures = np.matmul(sampleIn, randomWeights)
+    testFeatures = np.matmul(sampleIn, randomWeights)
+    for i in range(0, sampleIn,shape[0]):
+        newSampleIn[i] = np.append(sampleIn, trainFeatures[i])
+
     for i in range(0, testIn.shape[0]):
-        print(testIn.shape)
-        print(np.append(testIn[i], randomFeatures).shape)
-        newTestIn[i] = np.append(testIn[i], randomFeatures)
+        newTestIn[i] = np.append(testIn[i], testFeatures[i])
     x_train2 = newSampleIn
     x_test2 = newTestIn
 
