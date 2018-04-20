@@ -214,6 +214,13 @@ for y in sampleOut:
         correct = correct + 1
         continue
 
+zero = 0
+notZero = 0
+for guess in yGuesses:
+    if guess == 0:
+        zero = zero + 1
+
+print(float(zero) / yGuesses.shape[0])
 print("Confusion Matrix")
 print(confusionMatrix)
 print()
