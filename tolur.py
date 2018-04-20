@@ -183,6 +183,7 @@ correct = 0
 i = -1
 for y in sampleOut:
     i = i + 1
+    print(yGuesses[i])
     if int(y) == yGuesses[i]:
         correct = correct + 1
         continue
