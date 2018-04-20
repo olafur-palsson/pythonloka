@@ -21,6 +21,9 @@ y         = data1['y']
 terms     = data1['terms']
 n         = X.shape[0]
 
+minusOne = np.vectorize(lambda x : x - 1)
+y = minusOne(y)
+
 rnd       = np.random.permutation(n) # Slembin umrodun talnanna 1,...,n
 nfrac     = 0.7 # Hlutfall gagna sem er notad til thjalfunar
 n_train1  = int(nfrac*n)
@@ -35,19 +38,20 @@ testIn    = x_test2
 testOut   = y_test2
 
 def setSamples(isMNIST):
+    global sampleIn, sampleOut, testIn, testOut
     if isMNIST:
         sampleOut = y_train2
-        samepleIn = x_train2
+        sampleIn = x_train2
+        testOut = y_test2
         testIn = x_test2
-        testOut = x_test2
     else:
         sampleOut = y_train1
-        samepleIn = x_train1
-        testIn = x_test1
+        sampleIn = x_train1
         testOut = y_test1
+        testIn = x_test1
 
 def getNoClasses():
-    return 10 if sampleOut.shape == 10000 else 2
+    return 10 if sampleOut.shape[0] == 10000 else 3
 
 # prenta array til ad debugga
 def printa(a):
@@ -63,7 +67,7 @@ def getCategoryVector(category, correctCategory):
 
 def getCategoryMatrix(numberBeingChecked):
     # na i fylki sem er jafn langt og samples
-    categoryMatrix = np.zeros((sampleOut.shape[0], getNoClasses()))
+    categoryMatrix = np.zeros((sampleOut.shape[0], 2))
     i = 0
     for a in categoryMatrix:
         docCategory = int(y_train2[i]+ 0.001) # passa upp a ad talan se positive
@@ -105,7 +109,6 @@ def getSlope(numberBeingChecked):
 
 def leastSquare2(numberBeingChecked):
     slope = getSlope(numberBeingChecked)
-    print(slope)
     coordinates = compileCoordinates(numberBeingChecked)
     meanX, meanY = columnAverage(coordinates)
     constant = meanY - slope * meanX
@@ -176,22 +179,17 @@ def normalize(a):
 
 def getClassified2(x):
     sampleSize = x.shape[0]
-    shapeOfResults = [10, sampleSize, x.shape[1]]
+    shapeOfResults = [getNoClasses(), sampleSize, x.shape[1]]
     sampleValueForClass = np.zeros(shapeOfResults)
 
     # Na i gildin fyrir hvern pixil og hverja tolu
-    print("Round 1")
-    for i in range(0, 10):
+    for i in range(0, getNoClasses()):
         a = getSquaredTransformedValues(True, i)
         sampleValueForClass[i] = a
 
     # adeins ad fletja arrayid ut
-    print("Round 2")
-    print(sampleSize)
     ones = np.ones(x.shape[0])
-    print(sampleValueForClass.shape)
-    summedUpValues = np.zeros((10, x.shape[1]))
-    print(summedUpValues.shape)
+    summedUpValues = np.zeros((getNoClasses(), x.shape[1]))
     multMinusOne = np.vectorize(lambda x : -x)
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
     #threshHold = np.vectorize()
@@ -203,9 +201,6 @@ def getClassified2(x):
         sumOfRows = normalize(sumOfRows)
         summedUpValues[k] = sumOfRows
 
-    print("Round 3")
-    print(summedUpValues.shape)
-    printa(summedUpValues)
     classified = np.array([])
     for i in range(0, x.shape[0]):
         sample = x[i]
@@ -224,27 +219,44 @@ def getClassified2(x):
 yGuesses = getClassified2(sampleIn)
 yTest = getClassified2(testIn)
 
-def getConfusionMatrix(guesses, actual):
+def getConfusionMatrix(guesses, actualOutput):
     confusionMatrix = np.zeros((getNoClasses(), getNoClasses()))
+    print(confusionMatrix.shape)
+    print(guesses.shape)
     correct = 0
     i = -1
-    for y in actual:
+    for actual in actualOutput:
         i = i + 1
-        confusionMatrix[int(y)][int(guesses[i] + 0.01)] = confusionMatrix[int(y)][int(guesses[i])] + 1
-        if int(y) == guesses[i]:
+        guess = int(guesses[i])
+        y     = int(actual)
+        print(y, guess, confusionMatrix.shape)
+
+        confusionMatrix[y][guess] = confusionMatrix[y][guess] + 1
+        if y == guess:
             correct = correct + 1
             continue
     successRate = float(correct) / guesses.shape[0]
     return successRate, confusionMatrix.astype(int)
 
+def printConfusion(guesses, actual):
+    success, confusion = getConfusionMatrix(guesses, actual)
+    print("Error Rate:")
+    print(1 - success)
+    print("Confusion Matrix")
+    print(confusion)
+    print("")
 
+def printConfusionAndSuccessRate(isMNIST):
+    setSamples(isMNIST)
+    print(sampleIn.shape)
+    trainResults = getClassified2(sampleIn)
+    testResults  = getClassified2(testIn)
+    print("Training Data")
+    printConfusion(trainResults, sampleOut)
+    print("Test Data")
+    printConfusion(testResults, testOut)
 
-
-print("Confusion Matrix")
-
-print(confusionMatrix.astype(int))
-print()
-print("Success Rate")
-print(float(correct) / float(sampleOut.shape[0]))
-
-plot(5)
+print("----------MNIST Classification-----------")
+printConfusionAndSuccessRate(True)
+print("----------TERMS Classification-----------")
+printConfusionAndSuccessRate(False)
