@@ -2,6 +2,7 @@
 from math import *
 import numpy as np
 import matplotlib.pyplot as plt
+import operator
 
 # comment
 data2    = np.load('mnist_small.npz')
@@ -185,11 +186,10 @@ def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked = -1):
 # radar ordunum eftir hversu langt thau eru fra linunni
 # skilar 10 eftstu
 def getTop10():
+    termvalues = get_TermSquareDist_Dictionary(False, 1)
     sortedTermsValues = sorted(termvalues.items(), key=operator.itemgetter(1), reverse=True)
-    termvalues = get_TermSquareDist_Dictionary(False, -1)
     for a in range(0, 10):
-        print(a)
-        print(sortedTermsValues[a])
+        print(a, sortedTermsValues[a][0].split("\'"))
 
 # skilar index af haesta gildi i vigri
 def getIndexOfBest(array):
@@ -217,7 +217,6 @@ def getClassified2(x):
     for i in range(0, getNoClasses()):
         a = getSquaredTransformedValues(True, i)
         sampleValueForClass[i] = a
-
 
     # notad til ad fa medaltal
     ones = np.ones(x.shape[0])
