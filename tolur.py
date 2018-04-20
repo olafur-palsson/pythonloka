@@ -204,14 +204,20 @@ def getClassified2(x):
 
 yGuesses = getClassified2(sampleIn)
 
+confusionMatrix = np.zeros((10, 10))
 correct = 0
 i = -1
 for y in sampleOut:
     i = i + 1
+    confusionMatrix[int(y)][int(yGuesses[i])] = confusionMatrix[int(y)][int(yGuesses[i])] + 1
     if int(y) == yGuesses[i]:
         correct = correct + 1
         continue
 
+print("Confusion Matrix")
+print(confusionMatrix)
+print()
+print("Success Rate")
 print(float(correct) / float(sampleOut.shape[0]))
 
 plot(5)
