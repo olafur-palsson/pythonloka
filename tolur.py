@@ -34,7 +34,8 @@ sampleIn  = x_train2
 testIn    = x_test2
 testOut   = y_test2
 
-noClasses = 10 if sampleOut.shape == 10000 else 2
+def getNoClasses():
+    return 10 if sampleOut.shape == 10000 else 2
 
 # prenta array til ad debugga
 def printa(a):
@@ -50,7 +51,7 @@ def getCategoryVector(category, correctCategory):
 
 def getCategoryMatrix(numberBeingChecked):
     # na i fylki sem er jafn langt og samples
-    categoryMatrix = np.zeros((sampleOut.shape[0], noClasses))
+    categoryMatrix = np.zeros((sampleOut.shape[0], getNoClasses()))
     i = 0
     for a in categoryMatrix:
         docCategory = int(y_train2[i]+ 0.001) # passa upp a ad talan se positive
@@ -87,7 +88,7 @@ def getSlope(numberBeingChecked):
     coordinates = compileCoordinates(numberBeingChecked)
     sumOfMultiples = getMultiplesOfDistancesFromAverage(coordinates)
     sumOfSquareDist = sumOfSquareDistToAverage(coordinates[:,0])
-    # sumOfMultiples = np.sum(coordinates)
+    #sumOfMultiples = np.sum(coordinates)
     return sumOfMultiples / sumOfSquareDist
 
 def leastSquare2(numberBeingChecked):
@@ -155,6 +156,12 @@ def getIndexOfBest(array):
         if array[a] > maxValue:
             indexOfMax = a
 
+def normalize(a):
+    getAbs = np.vectorize(lambda x : abs(x))
+    max = np.max(getAbs(a))
+    divideByMax = np.vectorize(lambda x : round(x/max, 3))
+    return divideByMax(a)
+
 def getClassified2(x):
     sampleSize = x.shape[0]
     shapeOfResults = [10, sampleSize, x.shape[1]]
@@ -173,27 +180,23 @@ def getClassified2(x):
     print(sampleValueForClass.shape)
     summedUpValues = np.zeros((10, x.shape[1]))
     print(summedUpValues.shape)
-    k = 0
     multMinusOne = np.vectorize(lambda x : -x)
     sign = np.vectorize(lambda x : 1 if x > 0 else -1)
+    #threshHold = np.vectorize()
 
-    for allValuesForOneNumber in summedUpValues:
+    for k in range(0, summedUpValues.shape[0]):
         sumOfRows = np.matmul(sampleValueForClass[k].T, ones)
         #sumOfRows = sign(sumOfRows)
         sumOfRows = multMinusOne(sumOfRows)
+        sumOfRows = normalize(sumOfRows)
         summedUpValues[k] = sumOfRows
-        k = k + 1
 
     print("Round 3")
     print(summedUpValues.shape)
-    getAbs = np.vectorize(lambda x : abs(x))
-    max = np.max(getAbs(summedUpValues))
-    divideByMax = np.vectorize(lambda x : round(x/max, 2))
-    summedUpValues = divideByMax(summedUpValues)
-    i = -1
+    printa(summedUpValues)
     classified = np.array([])
-    for sample in x:
-        i = i + 1
+    for i in range(0, x.shape[0]):
+        sample = x[i]
         maxValue = -10000000000000000000000000
         indexMax = -1
         for j in range(0, summedUpValues.shape[0]):
@@ -201,22 +204,26 @@ def getClassified2(x):
             if value > maxValue:
                 maxValue = value
                 indexMax = j
-        print(np.array([i, sampleOut[i], indexMax, maxValue]).astype(int))
+        #print(np.array([i, sampleOut[i], indexMax, maxValue]).astype(int))
         classified = np.append(classified, indexMax)
 
     return classified
 
 yGuesses = getClassified2(sampleIn)
+yTest = getClassified2(testIn)
 
-confusionMatrix = np.zeros((10, 10))
-correct = 0
-i = -1
-for y in sampleOut:
-    i = i + 1
-    confusionMatrix[int(y)][int(yGuesses[i] + 0.01)] = confusionMatrix[int(y)][int(yGuesses[i])] + 1
-    if int(y) == yGuesses[i]:
-        correct = correct + 1
-        continue
+def getConfusionMatrix(guesses, actual):
+    confusionMatrix = np.zeros((getNoClasses(), getNoClasses()))
+    correct = 0
+    i = -1
+    for y in actual:
+        i = i + 1
+        confusionMatrix[int(y)][int(guesses[i] + 0.01)] = confusionMatrix[int(y)][int(guesses[i])] + 1
+        if int(y) == guesses[i]:
+            correct = correct + 1
+            continue
+    successRate = float(correct) / guesses.shape[0]
+    return successRate, confusionMatrix.astype(int)
 
 zero = 0
 notZero = 0
