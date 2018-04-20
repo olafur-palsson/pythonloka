@@ -221,15 +221,12 @@ yTest = getClassified2(testIn)
 
 def getConfusionMatrix(guesses, actualOutput):
     confusionMatrix = np.zeros((getNoClasses(), getNoClasses()))
-    print(confusionMatrix.shape)
-    print(guesses.shape)
     correct = 0
     i = -1
     for actual in actualOutput:
         i = i + 1
         guess = int(guesses[i])
         y     = int(actual)
-        print(y, guess, confusionMatrix.shape)
 
         confusionMatrix[y][guess] = confusionMatrix[y][guess] + 1
         if y == guess:
