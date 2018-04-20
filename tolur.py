@@ -290,6 +290,7 @@ def engineerFeatures(howManyFeatures):
 
 engineerFeatures(100)
 print("----------MNIST extra features-----------")
+trialAndError()
 printConfusionAndSuccessRate(False)
 engineerFeatures(1000)
 printConfusionAndSuccessRate(True)
