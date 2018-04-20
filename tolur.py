@@ -292,7 +292,7 @@ def trialAndError():
     success = 1
     confusion = 0
     trial = 0
-    while success > 0.2:
+    while success > 0.3:
         print("trial", trial, success)
         trial = trial + 1
         shuffle()
