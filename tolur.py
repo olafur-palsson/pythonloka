@@ -190,7 +190,7 @@ def getClassified2(x):
     max = np.max(getAbs(summedUpValues))
     divideByMax = np.vectorize(lambda x : round(x/max, 2))
     summedUpValues = divideByMax(summedUpValues)
-    i = 0
+    i = -1
     classified = np.array([])
     for sample in x:
         i = i + 1
@@ -201,8 +201,7 @@ def getClassified2(x):
             if value > maxValue:
                 maxValue = value
                 indexMax = j
-        print(i)
-        print(indexMax, maxValue)
+        print(np.array([i, sampleOut[i], indexMax, maxValue]).astype(int))
         classified = np.append(classified, indexMax)
 
     return classified
@@ -215,7 +214,6 @@ i = -1
 for y in sampleOut:
     i = i + 1
     confusionMatrix[int(y)][int(yGuesses[i] + 0.01)] = confusionMatrix[int(y)][int(yGuesses[i])] + 1
-    print(int(y), yGuesses[i])
     if int(y) == yGuesses[i]:
         correct = correct + 1
         continue
