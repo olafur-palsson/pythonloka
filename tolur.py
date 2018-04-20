@@ -30,7 +30,6 @@ y_train1  = y[rnd[0:n_train1]]
 x_test1   = X[rnd[n_train1:],:]
 y_test1   = y[rnd[n_train1:]]
 
-print(y_test1, y_train1)
 
 sampleOut = y_train2
 sampleIn  = x_train2
