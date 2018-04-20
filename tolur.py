@@ -196,7 +196,6 @@ def getClassified2(x):
         #sumOfRows = sign(sumOfRows)
         sumOfRows = multMinusOne(sumOfRows)
         sumOfRows = normalize(sumOfRows)
-        print(sumOfRows)
         summedUpValues[k] = sumOfRows
 
     classified = np.array([])
