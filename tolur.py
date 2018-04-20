@@ -145,6 +145,7 @@ def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     squareKeep = np.vectorize( lambda x : -(x ** 2) if x < 0 else x ** 2)
     transformed = getTransformedData(numberBeingChecked)
     squared = squareKeep(transformed) if keepsigns else square(transformed)
+    squared = transformed
     return squared
 
 def get_TermSquareDist_Dictionary(keepSigns, numberBeingChecked = -1):
@@ -258,32 +259,34 @@ def printConfusionAndSuccessRate(isMNIST):
 print("----------MNIST Classification-----------")
 printConfusionAndSuccessRate(True)
 
+cachedSampleIn = np.copy(sampleIn)
+cachedTestIn = testIn
 def engineerFeatures(howManyFeatures):
-    global sampleIn, testIn, x_train2, x_test2
-    max = np.max(sampleIn)
-    newSampleIn = np.zeros((sampleIn.shape[0], sampleIn.shape[1] + howManyFeatures))
-    newTestIn   = np.zeros((testIn.shape[0], testIn.shape[1] + howManyFeatures))
+    global x_train2, x_test2, cachedTestIn, cachedSampleIn
+    max = np.max(cachedSampleIn)
+    newSampleIn = np.zeros((cachedSampleIn.shape[0], cachedSampleIn.shape[1] + howManyFeatures))
+    newTestIn   = np.zeros((cachedTestIn.shape[0], cachedTestIn.shape[1] + howManyFeatures))
     sign = np.vectorize(lambda x : -1 if x<0 else 1)
-    randomWeights = np.random.rand(sampleIn.shape[1], howManyFeatures) * 2 - 1
-    randomWeights = sign(randomWeights)
+    randomWeights = np.random.rand(cachedSampleIn.shape[1], howManyFeatures)
+    #randomWeights = sign(randomWeights)
 
-    trainFeatures = np.matmul(sampleIn, randomWeights)
-    testFeatures = np.matmul(testIn, randomWeights)
+    trainFeatures = np.matmul(cachedSampleIn, randomWeights) / 784
+    testFeatures = np.matmul(cachedTestIn, randomWeights) / 784
 
-    for i in range(0, sampleIn.shape[0]):
-        newSampleIn[i] = np.append(sampleIn[i], trainFeatures[i])
+    for i in range(0, cachedSampleIn.shape[0]):
+        newSampleIn[i] = np.append(cachedSampleIn[i], trainFeatures[i])
 
-    for i in range(0, testIn.shape[0]):
-        newTestIn[i] = np.append(testIn[i], testFeatures[i])
+    for i in range(0, cachedTestIn.shape[0]):
+        newTestIn[i] = np.append(cachedTestIn[i], testFeatures[i])
     x_train2 = newSampleIn
     x_test2 = newTestIn
 
 engineerFeatures(100)
 print("----------MNIST extra features-----------")
 printConfusionAndSuccessRate(True)
-engineerFeatures(900)
-printConfusionAndSuccessRate(True)
-engineerFeatures(4000)
+engineerFeatures(1000)
 printConfusionAndSuccessRate(True)
 engineerFeatures(5000)
+printConfusionAndSuccessRate(True)
+engineerFeatures(10000)
 printConfusionAndSuccessRate(True)
