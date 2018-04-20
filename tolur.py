@@ -141,22 +141,40 @@ def getIndexOfBest(array):
             indexOfMax = a
 
 def getClassified2(x):
-    sampleValueForClass = np.zeros((10, 784))
+    sampleSize = x.shape[0]
+    shapeOfResults = [10, sampleSize, x.shape[1]]
+    sampleValueForClass = np.zeros(shapeOfResults)
+
+    print("Round 1")
+    for i in range(0, 10):
+        print(i)
+        a = getSquaredTransformedValues(True, i)
+        sampleValueForClass[i] = a[1]
+
+    # adeins ad fletja arrayid ut
+    print("Round 2")
+    print(sampleSize)
+    ones = np.ones(x.shape[1])
+    summedUpValues = np.ones((10, sampleSize))
+    print(summedUpValues.shape)
+    k = 0
+    for allValuesForOneNumber in sampleValueForClass:
+        sumOfRows = np.matmul(allValuesForOneNumber, ones)
+        summedUpValues[k] = sumOfRows
+        k = k + 1
+
+    summedUpValues = summedUpValues.T
+
+    print("Round 3")
     classified = np.array([])
-
-    for i in range(0, noClasses):
-        sampleValueForClass[i] = (getSquaredTransformedValues(True, 3))[1]
-
-    sampleValueForClass = sampleValueForClass.T
-    for i in range(0, sampleValueForClass.shape[0]):
-        maxValue = 0
+    for sample in summedUpValues:
+        maxValue = -float("inf")
         indexMax = -1
-        for j in range(0, sampleValueForClass.shape[1]):
-            if sampleValueForClass[i][j] > max:
+        for j in range(0, sample.shape[0]):
+            if sample[j] > maxValue:
+                maxValue = sample[j]
                 indexMax = j
-                maxValue = sampleValueForClass[i][j]
-        classified = np.append(classified, j)
-
+        classified = np.append(classified, indexMax)
     return classified
 
 yGuesses = getClassified2(sampleIn)
@@ -168,10 +186,7 @@ for y in sampleOut:
     if int(y) == yGuesses[i]:
         correct = correct + 1
         continue
-    if int(y) != 1 and yGuesses[i] == -1:
-        correct = correct + 1
-        continue
 
-print(1-(float(correct) / float(sampleOut.shape[0])))
+print(float(correct) / float(sampleOut.shape[0]))
 
 plot(1)
