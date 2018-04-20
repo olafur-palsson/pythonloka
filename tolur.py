@@ -292,7 +292,7 @@ def trialAndError():
     success = 1
     confusion = 0
     trial = 0
-    while success > 0.1:
+    while success > 0.2:
         print("trial", trial, success)
         trial = trial + 1
         shuffle()
@@ -322,9 +322,9 @@ def engineerFeatures(howManyFeatures):
     x_train2 = newSampleIn
     x_test2 = newTestIn
 
-
 print("----------TERM Classification-----------")
 trialAndError()
+getTop10()
 print("----------MNIST Classification-----------")
 printConfusionAndSuccessRate(True)
 engineerFeatures(100)
