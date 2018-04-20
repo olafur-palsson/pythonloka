@@ -323,12 +323,13 @@ def engineerFeatures(howManyFeatures):
     x_test2 = newTestIn
 
 
+print("----------TERM Classification-----------")
 trialAndError()
 print("----------MNIST Classification-----------")
 printConfusionAndSuccessRate(True)
 engineerFeatures(100)
 print("----------MNIST extra features-----------")
-printConfusionAndSuccessRate(False)
+printConfusionAndSuccessRate(True)
 engineerFeatures(1000)
 printConfusionAndSuccessRate(True)
 engineerFeatures(5000)
