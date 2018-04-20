@@ -107,14 +107,15 @@ def plot(numberBeingChecked):
 def getTransformedData(numberBeingChecked):
     # transformar data a thann hatt ad regression linan er larett
     # theta er horn regression linunnar
-    theta = np.arctan(getSlope(numberBeingChecked))
+    theta = -np.arctan(getSlope(numberBeingChecked))
+    print(theta)
     transform = np.array([[np.cos(theta), -np.sin(theta)],
                             [np.sin(theta), np.cos(theta) ]])
     return np.matmul(transform, compileCoordinates(numberBeingChecked).T)
 
 def getSquaredTransformedValues(keepsigns, numberBeingChecked):
     square = np.vectorize(lambda x : x ** 2)
-    squareKeep = np.vectorize( lambda x : -(x ** 2) if x > 0 else x ** 2)
+    squareKeep = np.vectorize( lambda x : -(x ** 2) if x < 0 else x ** 2)
     transformed = getTransformedData(numberBeingChecked)
     squared = squareKeep(transformed) if keepsigns else square(transformed)
     return squared
@@ -149,39 +150,39 @@ def getClassified2(x):
 
     print("Round 1")
     for i in range(0, 10):
-        print(i)
         a = getSquaredTransformedValues(True, i)
-        sampleValueForClass[i] = a[0]
+        sampleValueForClass[i] = a[1]
 
     # adeins ad fletja arrayid ut
     print("Round 2")
     print(sampleSize)
-    ones = np.ones(x.shape[1])
-    summedUpValues = np.zeros((10, sampleSize))
+    ones = np.ones(x.shape[0])
+    print(sampleValueForClass.shape)
+    summedUpValues = np.zeros((10, x.shape[1]))
     print(summedUpValues.shape)
     k = 0
-    takeLog = np.vectorize(lambda x : log(x, 10) if x > 0 else 0)
+    sign = np.vectorize(lambda x : 1 if x < 0 else -1)
     for allValuesForOneNumber in summedUpValues:
-        print(k)
-        print(allValuesForOneNumber.shape)
-        loged = takeLog(sampleValueForClass[k])
-        sumOfRows = np.matmul(loged, ones)
-        print(sumOfRows)
-        summedUpValues[k] = sumOfRows
+        sumOfRows = np.matmul(sampleValueForClass[k].T, ones)
+        summedUpValues[k] = sign(sumOfRows)
         k = k + 1
 
-    summedUpValues = summedUpValues.T
-
     print("Round 3")
+    print(summedUpValues.shape)
+    i = 0
     classified = np.array([])
-    for sample in summedUpValues:
-        maxValue = -float("inf")
+    for sample in x:
+        i = i + 1
+        maxValue = -10000000000000000000000000
         indexMax = -1
-        for j in range(0, sample.shape[0]):
-            if sample[j] > maxValue:
+        for j in range(0, summedUpValues.shape[0]):
+            value = sample.dot(summedUpValues[j])
+            if value > maxValue:
                 maxValue = sample[j]
                 indexMax = j
+
         classified = np.append(classified, indexMax)
+        i = i + 1
     return classified
 
 yGuesses = getClassified2(sampleIn)
