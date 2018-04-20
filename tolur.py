@@ -166,7 +166,7 @@ def getClassified2(x):
         print(allValuesForOneNumber.shape)
         loged = takeLog(sampleValueForClass[k])
         sumOfRows = np.matmul(loged, ones)
-        printa(sumOfRows)
+        print(sumOfRows)
         summedUpValues[k] = sumOfRows
         k = k + 1
 
