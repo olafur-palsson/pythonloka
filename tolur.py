@@ -1,3 +1,5 @@
+from math import *
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -105,7 +107,7 @@ def plot(numberBeingChecked):
 def getTransformedData(numberBeingChecked):
     # transformar data a thann hatt ad regression linan er larett
     # theta er horn regression linunnar
-    theta = -np.arctan(getSlope(numberBeingChecked))
+    theta = np.arctan(getSlope(numberBeingChecked))
     transform = np.array([[np.cos(theta), -np.sin(theta)],
                             [np.sin(theta), np.cos(theta) ]])
     return np.matmul(transform, compileCoordinates(numberBeingChecked).T)
@@ -149,17 +151,22 @@ def getClassified2(x):
     for i in range(0, 10):
         print(i)
         a = getSquaredTransformedValues(True, i)
-        sampleValueForClass[i] = a[1]
+        sampleValueForClass[i] = a[0]
 
     # adeins ad fletja arrayid ut
     print("Round 2")
     print(sampleSize)
     ones = np.ones(x.shape[1])
-    summedUpValues = np.ones((10, sampleSize))
+    summedUpValues = np.zeros((10, sampleSize))
     print(summedUpValues.shape)
     k = 0
-    for allValuesForOneNumber in sampleValueForClass:
-        sumOfRows = np.matmul(allValuesForOneNumber, ones)
+    takeLog = np.vectorize(lambda x : log(x, 10) if x > 0 else 0)
+    for allValuesForOneNumber in summedUpValues:
+        print(k)
+        print(allValuesForOneNumber.shape)
+        loged = takeLog(sampleValueForClass[k])
+        sumOfRows = np.matmul(loged, ones)
+        printa(sumOfRows)
         summedUpValues[k] = sumOfRows
         k = k + 1
 
@@ -183,7 +190,6 @@ correct = 0
 i = -1
 for y in sampleOut:
     i = i + 1
-    print(yGuesses[i])
     if int(y) == yGuesses[i]:
         correct = correct + 1
         continue
