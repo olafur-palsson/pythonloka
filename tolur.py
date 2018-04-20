@@ -291,8 +291,8 @@ def trialAndError():
     success = 1
     confusion = 0
     trial = 0
+    print("(This will take some time)")
     while success > 0.1:
-        print("trial", trial, success)
         trial = trial + 1
         shuffle()
         setSamples(False)
