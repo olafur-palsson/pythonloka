@@ -34,6 +34,18 @@ sampleIn  = x_train2
 testIn    = x_test2
 testOut   = y_test2
 
+def setSamples(isMNIST):
+    if isMNIST:
+        sampleOut = y_train2
+        samepleIn = x_train2
+        testIn = x_test2
+        testOut = x_test2
+    else:
+        sampleOut = y_train1
+        samepleIn = x_train1
+        testIn = x_test1
+        testOut = y_test1
+
 def getNoClasses():
     return 10 if sampleOut.shape == 10000 else 2
 
@@ -225,13 +237,9 @@ def getConfusionMatrix(guesses, actual):
     successRate = float(correct) / guesses.shape[0]
     return successRate, confusionMatrix.astype(int)
 
-zero = 0
-notZero = 0
-for guess in yGuesses:
-    if guess == 0:
-        zero = zero + 1
 
-print(float(zero) / yGuesses.shape[0])
+
+
 print("Confusion Matrix")
 
 print(confusionMatrix.astype(int))
