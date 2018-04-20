@@ -155,9 +155,10 @@ def getClassified2(x):
             if sampleValueForClass[i][j] > max:
                 indexMax = j
                 maxValue = sampleValueForClass[i][j]
-        np.append(classified, j)
+        classified = np.append(classified, j)
 
     return classified
+
 yGuesses = getClassified2(sampleIn)
 
 correct = 0
